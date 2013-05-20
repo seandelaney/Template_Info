@@ -200,6 +200,8 @@ class Template_info {
 		else :
 			$this->return_data = $this->EE->TMPL->tagdata;
 		endif;
+		
+		return;
 	} // END template_info
 	
 	private function get_site_pages() {
