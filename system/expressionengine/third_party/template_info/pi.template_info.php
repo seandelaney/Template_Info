@@ -15,11 +15,11 @@ $plugin_info = array(
 /**
  * Template info Class
  *
- * @package			ExpressionEngine
+ * @package		ExpressionEngine
  * @category		Plugin
- * @author			Sean Delaney @seandelaney
+ * @author		Sean Delaney @seandelaney
  * @copyright		Copyright (c) 2013
- * @link			http://www.seandelaney.ie
+ * @link		http://www.seandelaney.ie
  *
  * A huge thanks to Leevi Graham @leevigraham for allowing me to use his LGTemplateInfo plugin and port it EE 2.x
  *
