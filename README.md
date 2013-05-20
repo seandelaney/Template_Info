@@ -1,4 +1,4 @@
-Template_Info
+Template info
 =============
 
-A simple plugin that return template information.
+This simple plugin returns template information.
