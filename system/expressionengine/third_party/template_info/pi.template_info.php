@@ -5,7 +5,7 @@ endif;
 
 $plugin_info = array(
 	'pi_name' => 'Template info',
-	'pi_version' => '1.0.1',
+	'pi_version' => '1.0.2',
 	'pi_author' => 'Sean Delaney',
 	'pi_author_url' => 'http://www.seandelaney.ie',
 	'pi_description' => 'Template Info is a simple plugin that displays basic template information about the primary template being rendered.',
@@ -26,6 +26,8 @@ $plugin_info = array(
  * Leevi's original plugin for EE 1.x can be found here: http://leevigraham.com/cms-customisation/expressionengine/addon/lg-template-info/
  * 
  * Change Log
+ *
+ * v1.0.2 - Fixed an issue where template_group_name was never being set. Also added some 404 love.
  *
  * v1.0.1 - Fixed an issue where URI's where not matching due to a leading slash missing.
  *
@@ -80,9 +82,9 @@ class Template_info {
 				return false;
 			endif;
 			
-			$template = 'index';
+			$template_name = 'index';
 			$template_id = '';
-			$template_group = '';
+			$template_group_name = '';
 			$template_group_id = '';
 			
 			// If there are pages and the size of the pages uri array is more than one and the page exists in the pages uri array set the entry id
@@ -94,9 +96,9 @@ class Template_info {
 				if($query->num_rows > 0) :
 					// set them
 					foreach($query->result() as $row) :
-						$template = $row->template_name;
+						$template_name = $row->template_name;
 						$template_id = $row->template_id;
-						$template_group = $row->group_name;
+						$template_group_name = $row->group_name;
 						$template_group_id = $row->group_id;
 					endforeach;
 				endif;
@@ -111,9 +113,9 @@ class Template_info {
 					if($query->num_rows > 0) :
 						// set them
 						foreach($query->result() as $row) :
-							$template = $row->template_name;
+							$template_name = $row->template_name;
 							$template_id = $row->template_id;
-							$template_group = $row->group_name;
+							$template_group_name = $row->group_name;
 							$template_group_id = $row->group_id;
 						endforeach;
 					endif;
@@ -124,7 +126,6 @@ class Template_info {
 					// No?
 					if($query->num_rows == 0) :
 						// If we're not using the 404 feature we need to fetch the name of the default template group
-						
 						if($this->site_404 == '') :
 							// get the template default group
 							$query = $this->EE->db->query('SELECT tg.group_name, tg.group_id FROM '.$this->EE->db->dbprefix.'template_groups tg WHERE tg.is_site_default = "y" AND tg.site_id = '.$this->EE->db->escape_str($this->site_id).' LIMIT 1');
@@ -132,7 +133,7 @@ class Template_info {
 							if($query->num_rows > 0) :
 								// set them
 								foreach($query->result() as $row) :
-									$template_group = $row->group_name;
+									$template_group_name = $row->group_name;
 									$template_group_id = $row->group_id;
 								endforeach;
 							endif;
@@ -143,7 +144,7 @@ class Template_info {
 							// Yes!
 							if($query->num_rows > 0) :
 								// grab it
-								$template = $this->EE->uri->segment(1);
+								$template_name = $this->EE->uri->segment(1);
 							else :
 								$query = $this->EE->db->query('SELECT t.template_id FROM '.$this->EE->db->dbprefix.'templates t WHERE t.group_id = '.$template_group_id.' AND t.template_name = "index" LIMIT 1');
 							endif;
@@ -154,7 +155,20 @@ class Template_info {
 								endforeach;
 							endif;
 						else :
-							// I think we made need some 404 love here
+							// 404 template set
+							$page_not_found_uri = explode('/',$this->site_404);
+							
+							$query = $this->EE->db->query('SELECT t.template_name, t.template_id, tg.group_name, tg.group_id FROM '.$this->EE->db->dbprefix.'templates t, '.$this->EE->db->dbprefix.'template_groups tg WHERE tg.is_site_default = "y" AND t.group_id = tg.group_id AND t.template_name = "'.$page_not_found_uri[1].'" AND tg.site_id = '.$this->EE->db->escape_str($this->site_id).' LIMIT 1');
+					
+							if($query->num_rows > 0) :
+								// set them
+								foreach($query->result() as $row) :
+									$template_name = $row->template_name;
+									$template_id = $row->template_id;
+									$template_group_name = $row->group_name;
+									$template_group_id = $row->group_id;
+								endforeach;
+							endif;
 						endif;
 					// Yes!
 					else :
@@ -163,7 +177,7 @@ class Template_info {
 						endforeach;
 						
 						// Set the template group
-						$template_group = $this->EE->uri->segment(1);
+						$template_group_name = $this->EE->uri->segment(1);
 
 						// If there is no segment two it must be the index
 						if($this->EE->uri->segment(2)) :
@@ -173,7 +187,7 @@ class Template_info {
 							// Yes!
 							if($query->num_rows > 0) :
 								// Grab it
-								$template = $this->EE->uri->segment(2);
+								$template_name = $this->EE->uri->segment(2);
 							else :
 								// Gotta grab the index template id
 								$query = $this->EE->db->query('SELECT t.template_id FROM '.$this->EE->db->dbprefix.'templates t WHERE t.group_id = '.$template_group_id.' AND t.template_name = "index" LIMIT 1');
@@ -190,9 +204,9 @@ class Template_info {
 			endif;
 			
 			$this->EE->session->cache[$this->class_name]['template_id'] = $template_id;
-			$this->EE->session->cache[$this->class_name]['template_name'] = $template;
+			$this->EE->session->cache[$this->class_name]['template_name'] = $template_name;
 			$this->EE->session->cache[$this->class_name]['template_group_id'] = $template_group_id;
-			$this->EE->session->cache[$this->class_name]['template_group_name'] = $template_group;
+			$this->EE->session->cache[$this->class_name]['template_group_name'] = $template_group_name;
 		endif;
 			
 		$attribute = $this->EE->TMPL->fetch_param('attribute','');

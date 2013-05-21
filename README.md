@@ -43,6 +43,8 @@ Leevi's original plugin for EE 1.x can be found here: http://leevigraham.com/cms
 <br>
 <strong>CHANGE LOG</strong>
 
+v1.0.2 - Fixed an issue where template_group_name was never being set. Also added some 404 love.
+ 
 v1.0.1 - Fixed an issue where URI's where not matching due to a leading slash missing.
 
 v1.0.0 - Initial release
