@@ -5,7 +5,7 @@ endif;
 
 $plugin_info = array(
 	'pi_name' => 'Template info',
-	'pi_version' => '1.0.0',
+	'pi_version' => '1.0.1',
 	'pi_author' => 'Sean Delaney',
 	'pi_author_url' => 'http://www.seandelaney.ie',
 	'pi_description' => 'Template Info is a simple plugin that displays basic template information about the primary template being rendered.',
@@ -16,9 +16,9 @@ $plugin_info = array(
  * Template info Class
  *
  * @package		ExpressionEngine
- * @category		Plugin
+ * @category	Plugin
  * @author		Sean Delaney @seandelaney
- * @copyright		Copyright (c) 2013
+ * @copyright	Copyright (c) 2013
  * @link		http://www.seandelaney.ie
  *
  * A huge thanks to Leevi Graham @leevigraham for allowing me to use his LGTemplateInfo plugin and port it EE 2.x
@@ -26,6 +26,8 @@ $plugin_info = array(
  * Leevi's original plugin for EE 1.x can be found here: http://leevigraham.com/cms-customisation/expressionengine/addon/lg-template-info/
  * 
  * Change Log
+ *
+ * v1.0.1 - Fixed an issue where URI's where not matching due to a leading slash missing.
  *
  * v1.0.0 - Init release
  */
@@ -61,7 +63,7 @@ class Template_info {
         $this->site_404 = $this->EE->config->item('site_404');
 		
 		// Create a nice uri to match
-		$this->page_uri = $this->EE->uri->uri_string();
+		$this->page_uri = '/'.trim($this->EE->uri->uri_string());
         
 		$this->class_name = strtolower(__CLASS__);
 		
