@@ -43,7 +43,7 @@ Leevi's original plugin for EE 1.x can be found here: http://leevigraham.com/cms
 <br>
 <strong>CHANGE LOG</strong>
 
-v1.1.0 - Added < EE 2.6.0 backward compatiability.
+v1.1.0 - Added < EE 2.6.0 backward compatibility.
 
 v1.0.2 - Fixed an issue where template_group_name was never being set. Also added some 404 love.
  
