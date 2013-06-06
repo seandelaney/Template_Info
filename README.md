@@ -42,8 +42,9 @@ Leevi's original plugin for EE 1.x can be found here: http://leevigraham.com/cms
 
 <br>
 <strong>CHANGE LOG</strong>
+
 v2.0.0 - Added template info as early parsed global variables. 
-	   - Change from a plugin to an extension.
+       - Change from a plugin to an extension.
  		  
 v1.1.0 - Added < EE 2.6.0 backward compatibility.
 
